@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBPSX® 内测平台</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap');
+:root{--orange:#e96a2a;--navy:#1a2a4a;--ink:#111;--ink-soft:#3a3a3a;--ink-muted:#7a7a7a;--paper:#faf9f6;--border:#e0dbd0;--white:#fff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans SC','PingFang SC',sans-serif;background:var(--navy);min-height:100vh;}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--navy);position:relative;overflow:hidden;}
+#login-screen::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;border:1px solid rgba(255,255,255,0.05);border-radius:50%;}
+.login-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:2.5rem 2rem;width:100%;max-width:380px;text-align:center;position:relative;z-index:1;}
+.login-logo{font-family:'Noto Serif SC',serif;font-size:22px;font-weight:700;color:var(--orange);margin-bottom:4px;}
+.login-sub{font-size:11px;letter-spacing:0.18em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:2rem;}
+.login-badge{display:inline-block;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;background:rgba(233,106,42,0.15);border:1px solid rgba(233,106,42,0.3);color:var(--orange);padding:3px 12px;border-radius:2px;margin-bottom:1.8rem;}
+.login-field{margin-bottom:1rem;text-align:left;}
+.login-field label{display:block;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+.login-field input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:10px 14px;font-size:14px;color:#fff;font-family:'Noto Sans SC',sans-serif;outline:none;transition:border-color 0.2s;}
+.login-field input:focus{border-color:var(--orange);}
+.login-field input::placeholder{color:rgba(255,255,255,0.2);}
+.login-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:3px;padding:12px;font-size:14px;font-weight:500;font-family:'Noto Sans SC',sans-serif;cursor:pointer;margin-top:0.5rem;transition:background 0.2s;letter-spacing:0.05em;}
+.login-btn:hover{background:#f5895a;}
+.login-err{font-size:12px;color:#ff6b6b;margin-top:0.8rem;display:none;}
+#app{display:none;background:var(--paper);min-height:100vh;}
+.topbar{background:var(--navy);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-logo{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:700;color:var(--orange);}
+.topbar-logo span{color:rgba(255,255,255,0.5);font-size:11px;font-weight:300;margin-left:8px;letter-spacing:0.12em;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.usage-badge{font-size:11px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);padding:3px 10px;border-radius:2px;}
+.topbar-badge{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;background:rgba(233,106,42,0.2);border:1px solid rgba(233,106,42,0.4);color:var(--orange);padding:3px 10px;border-radius:2px;}
+.tabs{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 2rem;overflow-x:auto;}
+.tab{padding:1rem 1.2rem;font-size:13px;font-weight:500;color:var(--ink-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;}
+.tab:hover{color:var(--ink);}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+.panel{display:none;padding:2rem;max-width:800px;margin:0 auto;}
+.panel.active{display:block;}
+.tool-intro{background:var(--white);border:1px solid var(--border);border-top:3px solid var(--orange);border-radius:0 0 4px 4px;padding:1.5rem;margin-bottom:1.5rem;}
+.tool-intro h2{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:0.5rem;}
+.tool-intro p{font-size:13px;color:var(--ink-muted);line-height:1.8;}
+.input-label{font-size:12px;font-weight:600;color:var(--ink-soft);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.6rem;display:block;}
+textarea{width:100%;border:1px solid var(--border);border-radius:3px;padding:1rem;font-family:'Noto Sans SC',sans-serif;font-size:13px;line-height:1.8;color:var(--ink);background:var(--white);resize:vertical;min-height:120px;outline:none;transition:border-color 0.2s;}
+textarea:focus{border-color:var(--navy);}
+textarea::placeholder{color:var(--ink-muted);font-size:12px;}
+input[type=text]{width:100%;border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-family:'Noto Sans SC',sans-serif;font-size:13px;color:var(--ink);background:var(--white);outline:none;transition:border-color 0.2s;}
+input[type=text]:focus{border-color:var(--navy);}
+.run-btn{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:#fff;border:none;border-radius:3px;padding:11px 22px;font-size:13px;font-weight:500;font-family:'Noto Sans SC',sans-serif;cursor:pointer;margin-top:1rem;transition:background 0.2s;letter-spacing:0.05em;}
+.run-btn:hover{background:#f5895a;}
+.run-btn:disabled{background:#ccc;cursor:not-allowed;}
+.sec-btn{display:inline-flex;align-items:center;gap:8px;background:var(--navy);color:#fff;border:none;border-radius:3px;padding:11px 22px;font-size:13px;font-weight:500;font-family:'Noto Sans SC',sans-serif;cursor:pointer;margin-top:1rem;transition:background 0.2s;}
+.sec-btn:hover{background:#223a5e;}
+.loading-bar{display:none;margin-top:1.2rem;background:var(--white);border:1px solid var(--border);border-radius:3px;padding:1rem 1.2rem;}
+.loading-bar.active{display:block;}
+.loading-dots{display:flex;gap:6px;align-items:center;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--orange);opacity:0.3;animation:blink 1.2s ease-in-out infinite;}
+.dot:nth-child(2){animation-delay:0.2s;}
+.dot:nth-child(3){animation-delay:0.4s;}
+@keyframes blink{0%,100%{opacity:0.2}50%{opacity:1}}
+.loading-text{font-size:12px;color:var(--ink-muted);margin-left:10px;}
+.result-box{display:none;margin-top:1.2rem;background:var(--white);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.result-box.active{display:block;}
+.result-header{background:var(--navy);padding:0.8rem 1.2rem;display:flex;align-items:center;justify-content:space-between;}
+.result-title{font-size:12px;color:rgba(255,255,255,0.7);letter-spacing:0.1em;text-transform:uppercase;}
+.copy-btn{font-size:11px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:2px;padding:3px 10px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;transition:all 0.2s;}
+.copy-btn:hover{color:#fff;background:rgba(255,255,255,0.15);}
+.result-body{padding:1.5rem;font-size:13px;line-height:1.9;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-height:600px;overflow-y:auto;}
+.form-row{margin-bottom:1rem;}
+.form-row label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.success-msg{display:none;background:#f0f9f0;border:1px solid #b8e0b8;border-radius:4px;padding:1rem 1.2rem;font-size:13px;color:#2d7a2d;margin-top:1rem;}
+.success-msg.active{display:block;}
+.error-msg{display:none;background:#fff0f0;border:1px solid #f0b8b8;border-radius:4px;padding:1rem 1.2rem;font-size:13px;color:#c00;margin-top:1rem;}
+.error-msg.active{display:block;}
+.query-result{margin-top:1.5rem;}
+.record-card{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:1.2rem;margin-bottom:0.8rem;font-size:13px;}
+.record-card .rc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;}
+.record-card .rc-client{font-size:15px;font-weight:600;color:var(--ink);}
+.status-badge{font-size:11px;padding:3px 10px;border-radius:2px;font-weight:600;}
+.status-报备中{background:#fff3e0;color:#e65c00;}
+.status-已开课{background:#e3f2fd;color:#1565c0;}
+.status-已成交{background:#e8f5e9;color:#2e7d32;}
+.status-已过期{background:#f5f5f5;color:#757575;}
+.rc-row{display:flex;gap:1rem;flex-wrap:wrap;font-size:12px;color:var(--ink-muted);}
+.rc-row span strong{color:var(--ink-soft);}
+.news-card{background:var(--white);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:1rem;}
+.news-header{display:flex;align-items:center;gap:12px;padding:1rem 1.2rem;border-bottom:1px solid var(--border);}
+.news-tag{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:2px;}
+.news-tag.update{background:#fff3e0;color:#e65c00;}
+.news-tag.event{background:#e3f2fd;color:#1565c0;}
+.news-tag.notice{background:#f3e5f5;color:#6a1b9a;}
+.news-title{font-size:14px;font-weight:600;color:var(--ink);}
+.news-date{font-size:11px;color:var(--ink-muted);margin-left:auto;}
+.news-body{padding:1rem 1.2rem;font-size:13px;color:var(--ink-soft);line-height:1.8;}
+.about-card{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:1.2rem;}
+.about-card h3{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:0.8rem;}
+.about-card p{font-size:13px;color:var(--ink-soft);line-height:1.8;}
+.divider{text-align:center;font-size:12px;color:var(--ink-muted);margin:1.5rem 0;display:flex;align-items:center;gap:1rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+@media(max-width:600px){.tabs{padding:0 1rem;}.panel{padding:1.2rem 1rem;}.form-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">IBPSX<sup style="font-size:11px">®</sup></div>
+    <div class="login-sub">研究院 · 内测平台</div>
+    <div class="login-badge">Internal Beta · 合作伙伴专属</div>
+    <div class="login-field"><label>用户名</label><input type="text" id="username" placeholder="请输入用户名"/></div>
+    <div class="login-field"><label>密码</label><input type="password" id="password" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="login-btn" onclick="doLogin()">进入内测平台 →</button>
+    <div class="login-err" id="login-err">用户名或密码错误，请重试</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">IBPSX<sup style="font-size:10px">®</sup> <span>研究院</span></div>
+    <div class="topbar-right">
+      <div class="usage-badge" id="usage-badge">今日剩余：3次</div>
+      <div class="topbar-badge">内测版 Beta</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('dp')">🔍 问题重定义</div>
+    <div class="tab" onclick="switchTab('tree')">🌳 Issue Tree</div>
+    <div class="tab" onclick="switchTab('baobei')">📋 客户报备</div>
+    <div class="tab" onclick="switchTab('news')">📢 内部公告</div>
+    <div class="tab" onclick="switchTab('about')">ℹ️ 使用说明</div>
+  </div>
+
+  <!-- DP -->
+  <div class="panel active" id="panel-dp">
+    <div class="tool-intro">
+      <h2>第一性原理 · 问题重定义系统</h2>
+      <p>基于MECE原则与奥卡姆剃刀，找到问题情境背后的真正战略问题。输出价值函数分析、备选真问题清单、Top3优先问题与股东价值逻辑链。</p>
+    </div>
+    <label class="input-label">描述你的问题情境</label>
+    <textarea id="dp-input" placeholder="例如：我们公司销售额增长放缓，管理层希望通过数字化转型解决，正在考虑搭建CRM系统……"></textarea>
+    <button class="run-btn" id="dp-btn" onclick="runDP()">▶ 开始分析</button>
+    <div class="loading-bar" id="dp-loading"><div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="loading-text" id="dp-loading-text">正在分析问题本质…</span></div></div>
+    <div class="result-box" id="dp-result">
+      <div class="result-header"><span class="result-title">分析结果</span><button class="copy-btn" onclick="copyResult('dp-result-body')">复制</button></div>
+      <div class="result-body" id="dp-result-body"></div>
+    </div>
+  </div>
+
+  <!-- TREE -->
+  <div class="panel" id="panel-tree">
+    <div class="tool-intro">
+      <h2>战略顾问 · Issue Tree 拆解系统 v2.0</h2>
+      <p>基于第一性原理 + MECE原则，对已定义的真问题进行逐层拆解，输出高质量问题树、有洞见的机会点、假设验证表与机会举措矩阵。</p>
+    </div>
+    <label class="input-label">输入已重构的真问题</label>
+    <textarea id="tree-input" placeholder="建议先用【问题重定义】找到真问题，再粘贴到这里拆解。"></textarea>
+    <button class="run-btn" id="tree-btn" onclick="runTree()">▶ 开始拆解</button>
+    <div class="loading-bar" id="tree-loading"><div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="loading-text" id="tree-loading-text">正在构建问题树…</span></div></div>
+    <div class="result-box" id="tree-result">
+      <div class="result-header"><span class="result-title">Issue Tree 分析结果</span><button class="copy-btn" onclick="copyResult('tree-result-body')">复制</button></div>
+      <div class="result-body" id="tree-result-body"></div>
+    </div>
+  </div>
+
+  <!-- BAOBEI -->
+  <div class="panel" id="panel-baobei">
+    <div class="tool-intro">
+      <h2>客户报备管理</h2>
+      <p>报备有效期18个月。报备后可查询本机构所有报备记录。</p>
+    </div>
+
+    <div class="divider">新增报备</div>
+    <div class="form-grid">
+      <div class="form-row"><label>培训机构名称 *</label><input type="text" id="bb-agency" placeholder="请输入机构名称"/></div>
+      <div class="form-row"><label>合伙人姓名 *</label><input type="text" id="bb-partner" placeholder="请输入姓名"/></div>
+    </div>
+    <div class="form-row"><label>客户企业名称 *</label><input type="text" id="bb-client" placeholder="请输入客户企业名称"/></div>
+    <button class="run-btn" onclick="submitBaobei()">📋 提交报备</button>
+    <div class="success-msg" id="bb-success">✅ 报备成功！有效期18个月，请妥善跟进。</div>
+    <div class="error-msg" id="bb-error">提交失败，请重试。</div>
+
+    <div class="divider" style="margin-top:2rem">查询我的报备</div>
+    <div class="form-row"><label>培训机构名称</label><input type="text" id="qq-agency" placeholder="输入机构名称查询"/></div>
+    <button class="sec-btn" onclick="queryBaobei()">🔍 查询报备记录</button>
+    <div class="query-result" id="query-result"></div>
+  </div>
+
+  <!-- NEWS -->
+  <div class="panel" id="panel-news">
+    <div class="news-card">
+      <div class="news-header">
+        <span class="news-tag update">版本更新</span>
+        <span class="news-title">IBPSX® 内测平台 v1.0 上线</span>
+        <span class="news-date">2026-03-29</span>
+      </div>
+      <div class="news-body">内测平台正式上线，包含问题重定义工具、Issue Tree拆解工具、客户报备管理系统。欢迎合作伙伴试用并反馈意见，您的建议将直接影响产品迭代方向。</div>
+    </div>
+    <div class="news-card">
+      <div class="news-header">
+        <span class="news-tag notice">重要说明</span>
+        <span class="news-title">客户报备规则说明</span>
+        <span class="news-date">2026-03-29</span>
+      </div>
+      <div class="news-body">客户报备有效期为18个月，报备后即锁定该客户归属。请各合作机构在接触企业客户后及时报备。如有疑问请联系徐璐老师企业微信。</div>
+    </div>
+    <div class="news-card">
+      <div class="news-header">
+        <span class="news-tag event">活动预告</span>
+        <span class="news-title">IBPSX® 合作伙伴沙龙（筹备中）</span>
+        <span class="news-date">2026-04</span>
+      </div>
+      <div class="news-body">计划于2026年4月举办首届合作伙伴线下沙龙，届时将分享最新课程更新、标杆案例、以及与合作伙伴共同探讨市场策略。具体时间地点待定，敬请关注。</div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="panel" id="panel-about">
+    <div class="about-card">
+      <h3>欢迎参与 IBPSX® 内测</h3>
+      <p>你正在体验 IBPSX® 研究院开发的合作伙伴专属平台，包含AI辅助工具和客户报备管理系统。</p>
+    </div>
+    <div class="about-card">
+      <h3>AI工具使用说明</h3>
+      <p><strong>每日限额：每个账号每天可使用AI工具3次</strong>（问题重定义和Issue Tree各算1次）。建议先用问题重定义找到真问题，再串联Issue Tree深度拆解。结果可直接复制使用。</p>
+    </div>
+    <div class="about-card">
+      <h3>客户报备说明</h3>
+      <p>提交报备后有效期18个月，系统自动计算到期日期。可随时查询本机构的所有报备记录。状态更新由IBPSX研究院后台操作。</p>
+    </div>
+    <div style="background:rgba(233,106,42,0.08);border:1px solid rgba(233,106,42,0.2);border-radius:4px;padding:1.2rem 1.5rem;font-size:13px;color:var(--ink-soft);line-height:1.8;">
+      📮 <strong>反馈渠道：</strong>体验后如有建议，欢迎扫码添加徐璐企业微信反馈。
+    </div>
+  </div>
+</div>
+
+<script>
+const WORKER = 'https://ibpsx-api.anitaqxy.workers.dev';
+const CORRECT_USER = 'ibpsx.world';
+const CORRECT_PASS = 'ibpsx@123';
+
+function doLogin() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  if (u === CORRECT_USER && p === CORRECT_PASS) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    updateUsageBadge();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+  }
+}
+
+function getToday() { return new Date().toISOString().split('T')[0]; }
+
+function getUsage() {
+  const key = 'ibpsx_usage_' + getToday();
+  return parseInt(localStorage.getItem(key) || '0');
+}
+
+function addUsage() {
+  const key = 'ibpsx_usage_' + getToday();
+  const n = getUsage() + 1;
+  localStorage.setItem(key, n);
+  updateUsageBadge();
+  return n;
+}
+
+function updateUsageBadge() {
+  const used = getUsage();
+  const left = Math.max(0, 3 - used);
+  document.getElementById('usage-badge').textContent = '今日剩余：' + left + '次';
+  if (left === 0) document.getElementById('usage-badge').style.color = '#ff6b6b';
+}
+
+function switchTab(name) {
+  const tabs = ['dp','tree','baobei','news','about'];
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i] === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+const DP_SYSTEM = `你是一位顶级战略顾问（麦肯锡/BCG水准），请基于第一性原理、MECE原则、奥卡姆剃刀，对用户输入的问题情境进行深度分析，找到问题情境背后的真正问题所在。
+
+真问题需同时符合以下标准：
+1. 价值导向：不是任务或交付物（工具），而是价值（目的）。
+2. 客户导向：识别问题背后的出资人，站在出资人角度描述问题。
+3. 增量原则：多快好省一方面或几方面的总和提升，定义出目标项和量纲。
+4. 客观原则：可证伪的事实描述，目标值和基准值符合SMART原则。
+5. 优先原则：推导符合前4条的备选问题，按对企业价值的影响大小排序，选出Top3。
+
+输出格式：
+【Step 1：价值函数与基石公理分析】
+（200字左右商业语言描述）
+
+【Step 2：备选真问题清单】
+（5个符合4条原则的备选问题，含量纲和SMART目标）
+
+【Step 3：Top 3 优先问题 · 股东价值逻辑链】
+Top 1：[标题]
+具体描述：[含基准值、目标值、量纲]
+逻辑链：[改善项] → [指标变化] → [利润变化] → [企业价值提升]
+（Top2、Top3同格式）`;
+
+const TREE_SYSTEM = `你是一位顶级战略顾问（麦肯锡/BCG水准），擅长用结构化思维拆解复杂问题。请对输入的真问题输出高质量Issue Tree。
+
+质量标准：MECE原则；有洞见（☆没想到/+没行动/*没到位，全树≥5个☆）；可证伪（事实描述，形容词+名词+单位）；第一性原理（第一层必须是本质公式）
+
+【Step 0：已知举措锚定】（表格）
+【Step 1：逐层拆解+理由】（第一层写本质公式+量纲）
+【Step 2：深挖高杠杆分支】（标注☆/+/*，确认≥5个☆）
+【Step 3：完整Issue Tree（Markdown层级）】
+【Step 4：假设验证表】（机会点|核心假设|验证方法|所需数据）
+【Step 5：机会举措矩阵】（机会点|具体举措|预估效益|最佳实践）`;
+
+const DP_MSGS = ['正在分析问题本质…','提取价值函数与公理…','识别备选真问题…','按股东价值排序…','生成逻辑链…'];
+const TREE_MSGS = ['正在构建问题树…','识别已知举措…','逐层拆解结构…','深挖高杠杆机会点…','生成验证表与举措矩阵…'];
+
+async function runAI(systemPrompt, userInput, btnId, loadingId, loadingTextId, resultId, resultBodyId, msgs) {
+  if (getUsage() >= 3) {
+    alert('今日使用次数已达上限（3次），请明天再试。');
+    return;
+  }
+  if (!userInput.trim()) return;
+  document.getElementById(btnId).disabled = true;
+  document.getElementById(resultId).classList.remove('active');
+  document.getElementById(loadingId).classList.add('active');
+  let i = 0;
+  const interval = setInterval(() => {
+    i = (i+1) % msgs.length;
+    document.getElementById(loadingTextId).textContent = msgs[i];
+  }, 2000);
+  try {
+    const res = await fetch(WORKER + '/ai', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({messages: [{role:'system',content:systemPrompt},{role:'user',content:userInput}]})
+    });
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content || '分析失败，请重试。';
+    document.getElementById(resultBodyId).textContent = text;
+    document.getElementById(resultId).classList.add('active');
+    addUsage();
+  } catch(e) {
+    document.getElementById(resultBodyId).textContent = '分析失败，请检查网络后重试。';
+    document.getElementById(resultId).classList.add('active');
+  } finally {
+    clearInterval(interval);
+    document.getElementById(loadingId).classList.remove('active');
+    document.getElementById(btnId).disabled = false;
+  }
+}
+
+function runDP() {
+  runAI(DP_SYSTEM, document.getElementById('dp-input').value, 'dp-btn', 'dp-loading', 'dp-loading-text', 'dp-result', 'dp-result-body', DP_MSGS);
+}
+
+function runTree() {
+  runAI(TREE_SYSTEM, document.getElementById('tree-input').value, 'tree-btn', 'tree-loading', 'tree-loading-text', 'tree-result', 'tree-result-body', TREE_MSGS);
+}
+
+async function submitBaobei() {
+  const agency = document.getElementById('bb-agency').value.trim();
+  const partner = document.getElementById('bb-partner').value.trim();
+  const client = document.getElementById('bb-client').value.trim();
+  if (!agency || !partner || !client) { alert('请填写所有必填项'); return; }
+  document.getElementById('bb-success').classList.remove('active');
+  document.getElementById('bb-error').classList.remove('active');
+  try {
+    const res = await fetch(WORKER + '/baobei', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({agency, partner, client})
+    });
+    const data = await res.json();
+    if (data.id) {
+      document.getElementById('bb-success').classList.add('active');
+      document.getElementById('bb-agency').value = '';
+      document.getElementById('bb-partner').value = '';
+      document.getElementById('bb-client').value = '';
+    } else {
+      document.getElementById('bb-error').textContent = '提交失败：' + (data.error?.message || '请重试');
+      document.getElementById('bb-error').classList.add('active');
+    }
+  } catch(e) {
+    document.getElementById('bb-error').classList.add('active');
+  }
+}
+
+async function queryBaobei() {
+  const agency = document.getElementById('qq-agency').value.trim();
+  if (!agency) { alert('请输入机构名称'); return; }
+  const container = document.getElementById('query-result');
+  container.innerHTML = '<p style="font-size:13px;color:var(--ink-muted);padding:1rem 0;">查询中…</p>';
+  try {
+    const res = await fetch(WORKER + '/query?agency=' + encodeURIComponent(agency));
+    const data = await res.json();
+    const records = data.records || [];
+    if (records.length === 0) {
+      container.innerHTML = '<p style="font-size:13px;color:var(--ink-muted);padding:1rem 0;">未找到该机构的报备记录。</p>';
+      return;
+    }
+    container.innerHTML = '<p style="font-size:12px;color:var(--ink-muted);margin-bottom:1rem;">共找到 ' + records.length + ' 条报备记录</p>' +
+      records.map(r => {
+        const f = r.fields;
+        const status = f['报备状态'] || '报备中';
+        return '<div class="record-card"><div class="rc-top"><span class="rc-client">' + (f['客户企业名称']||'-') + '</span><span class="status-badge status-' + status + '">' + status + '</span></div><div class="rc-row"><span><strong>合伙人：</strong>' + (f['合伙人姓名']||'-') + '</span><span><strong>报备日期：</strong>' + (f['报备日期']||'-') + '</span><span><strong>有效期至：</strong>' + (f['有效期至']||'-') + '</span>' + (f['项目类型'] ? '<span><strong>项目类型：</strong>' + f['项目类型'] + '</span>' : '') + (f['开课时间'] ? '<span><strong>开课时间：</strong>' + f['开课时间'] + '</span>' : '') + '</div>' + (f['备注'] ? '<div style="margin-top:0.5rem;font-size:12px;color:var(--ink-muted)">备注：' + f['备注'] + '</div>' : '') + '</div>';
+      }).join('');
+  } catch(e) {
+    container.innerHTML = '<p style="font-size:13px;color:#c00;padding:1rem 0;">查询失败，请重试。</p>';
+  }
+}
+
+function copyResult(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    event.target.textContent = '已复制 ✓';
+    setTimeout(() => event.target.textContent = '复制', 2000);
+  });
+}
+</script>
+</body>
+</html>
