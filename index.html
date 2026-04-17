@@ -1,5 +1,445 @@
-IBPSX®
-合作伙伴专属平台 · 内测版
-访问密码
-进入平台
 
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBPSX® 内测平台</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --orange: #E96A2A;
+    --orange-light: #F5892E;
+    --orange-dim: rgba(233,106,42,0.12);
+    --dark-blue: #1A2A4A;
+    --dark-blue-2: #243558;
+    --mid-blue: #3A5070;
+    --light-blue: #E8EEF6;
+    --white: #FFFFFF;
+    --off-white: #F7F9FC;
+    --gray-1: #F0F3F8;
+    --gray-2: #D8E0EE;
+    --gray-3: #8896A7;
+    --text-dark: #1A2A4A;
+    --text-mid: #4A5A70;
+    --text-light: #8896A7;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(26,42,74,0.10);
+    --shadow-hover: 0 8px 32px rgba(26,42,74,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--off-white);
+    color: var(--text-dark);
+    min-height: 100vh;
+  }
+
+  /* ── LOGIN SCREEN ── */
+  #login-screen {
+    position: fixed; inset: 0;
+    background: var(--dark-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .login-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 48px 40px;
+    width: 360px;
+    text-align: center;
+  }
+  .login-logo {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+  .login-logo span { color: var(--orange); }
+  .login-tagline {
+    font-size: 13px;
+    color: var(--gray-3);
+    margin-bottom: 36px;
+    letter-spacing: 0.05em;
+  }
+  .login-label {
+    font-size: 12px;
+    color: var(--gray-3);
+    text-align: left;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .login-input {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 15px;
+    color: var(--white);
+    font-family: 'Noto Sans SC', sans-serif;
+    outline: none;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .login-input:focus { border-color: var(--orange); }
+  .login-input::placeholder { color: rgba(255,255,255,0.25); }
+  .login-btn {
+    width: 100%;
+    background: var(--orange);
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--white);
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.05em;
+  }
+  .login-btn:hover { background: var(--orange-light); }
+  .login-btn:active { transform: scale(0.98); }
+  .login-error {
+    font-size: 13px;
+    color: #FF6B6B;
+    margin-top: 12px;
+    min-height: 18px;
+  }
+
+  /* ── MAIN APP ── */
+  #app { display: none; }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--dark-blue);
+    padding: 0 40px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  }
+  .logo {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.03em;
+  }
+  .logo span { color: var(--orange); }
+  .header-badge {
+    background: var(--orange);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, var(--dark-blue-2) 60%, #2A4060 100%);
+    padding: 56px 40px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -80px; top: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(233,106,42,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 800px; position: relative; }
+  .hero h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.35;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+  .hero h1 em { color: var(--orange); font-style: normal; }
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── MODULE GRID ── */
+  .main { max-width: 920px; margin: 0 auto; padding: 48px 40px 80px; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--gray-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .module-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .module-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--gray-2);
+    padding: 28px 28px 24px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .module-card:hover {
+    box-shadow: var(--shadow-hover);
+    border-color: var(--orange);
+    transform: translateY(-2px);
+  }
+  .module-card.disabled {
+    opacity: 0.55;
+    cursor: default;
+    pointer-events: none;
+  }
+  .module-card.disabled:hover { transform: none; }
+
+  .card-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+  .card-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--dark-blue);
+    letter-spacing: 0.02em;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+  .card-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+  .tag-live { background: rgba(13,122,55,0.10); color: #0D7A37; }
+  .tag-coming { background: var(--gray-1); color: var(--gray-3); }
+  .tag-new { background: var(--orange-dim); color: var(--orange); }
+
+  .card-arrow {
+    font-size: 16px;
+    color: var(--orange);
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    transform: translateX(-4px);
+  }
+  .module-card:hover .card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* accent bar on left */
+  .module-card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--orange);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .module-card:hover::after { opacity: 1; }
+
+  /* wide card spans both columns */
+  .module-card.wide {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+  }
+  .module-card.wide .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .site-footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray-3);
+    padding: 24px 40px;
+    border-top: 1px solid var(--gray-2);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 640px) {
+    .module-grid { grid-template-columns: 1fr; }
+    .module-card.wide { flex-direction: column; }
+    .main { padding: 32px 20px 60px; }
+    .hero { padding: 40px 20px 36px; }
+    .site-header { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">IBPSX<span>®</span></div>
+    <div class="login-tagline">合作伙伴专属平台 · 内测版</div>
+    <div class="login-label">访问密码</div>
+    <input class="login-input" type="password" id="pwd-input" placeholder="请输入密码"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">进入平台</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+
+<header class="site-header">
+  <div class="logo">IBPSX<span>®</span> 研究院</div>
+  <span class="header-badge">内测版 BETA</span>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1>合作伙伴<em>专属平台</em></h1>
+    <p class="hero-sub">销售赋能 · 客户报备 · 案例库 · 提示词工具 · 销售数据</p>
+  </div>
+</section>
+
+<main class="main">
+  <div class="section-label">选择模块</div>
+  <div class="module-grid">
+
+    <!-- 销售赋能 -->
+    <a class="module-card" href="/sales/">
+      <div class="card-icon">🎯</div>
+      <div class="card-title">销售赋能</div>
+      <div class="card-desc">HR成交全链路六阶段手册、话术工具、顾问介入时机。产品型与顾问型销售分层赋能。</div>
+      <div class="card-footer">
+        <span class="card-tag tag-live">已上线</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 客户报备 -->
+    <a class="module-card" href="/crm/">
+      <div class="card-icon">📋</div>
+      <div class="card-title">客户报备</div>
+      <div class="card-desc">提交客户报备，锁定归属18个月。可随时查询本机构所有报备记录及状态。</div>
+      <div class="card-footer">
+        <span class="card-tag tag-live">已上线</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 案例库 -->
+    <a class="module-card disabled" href="/cases/">
+      <div class="card-icon">🎬</div>
+      <div class="card-title">案例库</div>
+      <div class="card-desc">课程真实学员案例，辅导前后对比。帮助销售建立信任、解决「理解不相信」阶段的五层信任。</div>
+      <div class="card-footer">
+        <span class="card-tag tag-coming">即将上线</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 提示词工具 -->
+    <a class="module-card" href="/prompts/">
+      <div class="card-icon">🔧</div>
+      <div class="card-title">提示词工具</div>
+      <div class="card-desc">第一性原理·问题重定义系统 + Issue Tree拆解工具。每账号每日3次AI使用额度。</div>
+      <div class="card-footer">
+        <span class="card-tag tag-live">已上线</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 销售数据 -->
+    <a class="module-card wide disabled" href="/crm/">
+      <div class="card-icon">📊</div>
+      <div class="card-body">
+        <div class="card-title">销售数据管理</div>
+        <div class="card-desc">覆盖数统计、线索跟踪、复盘表单。数据驱动销售增长飞轮，顾问型销售专属工具。</div>
+        <div class="card-footer">
+          <span class="card-tag tag-coming">即将上线</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+<footer class="site-footer">IBPSX® 研究院 · ibpsx.world · 合作伙伴专属平台</footer>
+
+</div><!-- /app -->
+
+<script>
+const PASS = 'ibpsx@123';
+
+function doLogin() {
+  const val = document.getElementById('pwd-input').value;
+  const err = document.getElementById('login-error');
+  if (val === PASS) {
+    sessionStorage.setItem('ibpsx_auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    err.textContent = '';
+  } else {
+    err.textContent = '密码错误，请重试';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+
+// Auto-login if already authenticated this session
+if (sessionStorage.getItem('ibpsx_auth') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+// Focus password input on load
+document.getElementById('pwd-input').focus();
+</script>
+
+</body>
+</html>
