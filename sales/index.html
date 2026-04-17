@@ -1,10 +1,607 @@
-←
-返回导航中心
-IBPSX® · 销售赋能
-加载中…
-加载中…
 
-全部展开
-全部收起
-正在加载内容…
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR成交全链路 · IBPSX®</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
 
+  :root {
+    --orange: #E96A2A;
+    --orange-light: #F5892E;
+    --orange-dim: rgba(233,106,42,0.12);
+    --dark-blue: #1A2A4A;
+    --dark-blue-2: #243558;
+    --mid-blue: #3A5070;
+    --light-blue: #E8EEF6;
+    --teal: #0D7A8A;
+    --teal-dim: rgba(13,122,138,0.12);
+    --white: #FFFFFF;
+    --off-white: #F7F9FC;
+    --gray-1: #F0F3F8;
+    --gray-2: #D8E0EE;
+    --gray-3: #8896A7;
+    --text-dark: #1A2A4A;
+    --text-mid: #4A5A70;
+    --text-light: #8896A7;
+    --radius: 10px;
+    --shadow: 0 4px 24px rgba(26,42,74,0.10);
+    --shadow-hover: 0 8px 32px rgba(26,42,74,0.16);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--off-white);
+    color: var(--text-dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--dark-blue);
+    padding: 0 40px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  }
+  .site-header .logo {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.03em;
+  }
+  .site-header .logo span { color: var(--orange); }
+  .site-header .meta {
+    font-size: 12px;
+    color: var(--gray-3);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, var(--dark-blue-2) 60%, #2A4060 100%);
+    padding: 56px 40px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -80px; top: -80px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(233,106,42,0.12) 0%, transparent 70%);
+  }
+  .hero-inner { max-width: 960px; margin: 0 auto; position: relative; }
+  .hero h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+  .hero h1 em { color: var(--orange); font-style: normal; }
+  .hero .subtitle {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── STAGE PILLS (nav) ── */
+  .stage-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .stage-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .stage-pill:hover, .stage-pill.active {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: var(--white);
+  }
+  .stage-pill .num {
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.7;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* ── STAGE CARD ── */
+  .stage-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+    scroll-margin-top: 80px;
+  }
+  .stage-card:hover { box-shadow: var(--shadow-hover); }
+
+  /* card header row */
+  .stage-header {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .stage-num {
+    background: var(--dark-blue);
+    color: var(--white);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    padding: 24px 0;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stage-card:nth-child(1) .stage-num { background: var(--dark-blue); }
+  .stage-card:nth-child(2) .stage-num { background: var(--mid-blue); }
+  .stage-card:nth-child(3) .stage-num { background: var(--orange); }
+  .stage-card:nth-child(4) .stage-num { background: var(--teal); }
+  .stage-card:nth-child(5) .stage-num { background: #6A5ACD; }
+  .stage-card:nth-child(6) .stage-num { background: #2E7D32; }
+
+  .stage-title-block {
+    padding: 20px 24px;
+  }
+  .stage-name {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+  }
+  .stage-tagline {
+    font-size: 13px;
+    color: var(--text-light);
+  }
+
+  .stage-meta {
+    padding: 20px 24px 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 140px;
+  }
+  .owner-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: var(--gray-1);
+    color: var(--text-mid);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .toggle-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gray-1);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-light);
+    font-size: 14px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .stage-card.open .toggle-btn {
+    background: var(--orange-dim);
+    color: var(--orange);
+    transform: rotate(180deg);
+  }
+
+  /* ── CONTENT GRID ── */
+  .stage-body {
+    display: none;
+    border-top: 1px solid var(--gray-2);
+  }
+  .stage-card.open .stage-body { display: block; }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  /* Pain column */
+  .pain-col {
+    padding: 24px;
+    border-right: 1px solid var(--gray-2);
+    background: var(--gray-1);
+  }
+  .col-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+  .pain-summary {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 12px;
+  }
+  .pain-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pain-list li {
+    font-size: 13px;
+    color: var(--text-mid);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .pain-list li::before {
+    content: '·';
+    color: var(--orange);
+    font-size: 18px;
+    line-height: 1.2;
+    flex-shrink: 0;
+  }
+
+  /* Actions column */
+  .actions-col {
+    padding: 24px;
+  }
+
+  /* Action items */
+  .action-item {
+    margin-bottom: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--gray-2);
+  }
+  .action-item:last-child { margin-bottom: 0; }
+
+  .action-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 14px;
+    cursor: pointer;
+    background: var(--white);
+    transition: background 0.15s;
+    gap: 8px;
+  }
+  .action-header:hover { background: var(--gray-1); }
+
+  .action-label-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .action-type-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .badge-script {
+    background: var(--orange-dim);
+    color: var(--orange);
+  }
+  .badge-tool {
+    background: var(--teal-dim);
+    color: var(--teal);
+  }
+  .badge-action {
+    background: var(--light-blue);
+    color: var(--mid-blue);
+  }
+
+  .action-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dark);
+    line-height: 1.4;
+  }
+
+  .action-toggle {
+    font-size: 12px;
+    color: var(--text-light);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .action-item.open .action-toggle { transform: rotate(180deg); }
+
+  .action-body {
+    display: none;
+    padding: 14px 16px;
+    background: var(--off-white);
+    border-top: 1px solid var(--gray-2);
+  }
+  .action-item.open .action-body { display: block; }
+
+  .action-content {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Script styling */
+  .action-item[data-type="script"] .action-body {
+    background: #FAFBFF;
+  }
+  .action-item[data-type="script"] .action-content {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 13px;
+    color: var(--dark-blue);
+    border-left: 3px solid var(--orange);
+    padding-left: 12px;
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    text-align: center;
+    padding: 32px;
+    color: var(--text-light);
+    font-size: 12px;
+    border-top: 1px solid var(--gray-2);
+    background: var(--white);
+  }
+
+  /* ── EXPAND ALL ── */
+  .toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    gap: 8px;
+  }
+  .toolbar-btn {
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--gray-2);
+    background: var(--white);
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .toolbar-btn:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+    background: var(--orange-dim);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .hero { padding: 40px 20px 32px; }
+    .hero h1 { font-size: 26px; }
+    .content-grid { grid-template-columns: 1fr; }
+    .pain-col { border-right: none; border-bottom: 1px solid var(--gray-2); }
+    .stage-meta { min-width: auto; }
+    .site-header { padding: 0 20px; }
+  }
+
+  /* ── LOADING ── */
+  .loading {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-light);
+    font-size: 15px;
+  }
+
+  /* ── ANIMATION ── */
+  .stage-card {
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .stage-card:nth-child(1) { animation-delay: 0.05s; }
+  .stage-card:nth-child(2) { animation-delay: 0.10s; }
+  .stage-card:nth-child(3) { animation-delay: 0.15s; }
+  .stage-card:nth-child(4) { animation-delay: 0.20s; }
+  .stage-card:nth-child(5) { animation-delay: 0.25s; }
+  .stage-card:nth-child(6) { animation-delay: 0.30s; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div style="display:flex;align-items:center;gap:20px;">
+    <a href="/" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.55);font-size:13px;text-decoration:none;letter-spacing:0.03em;transition:color 0.15s;" onmouseover="this.style.color='#E96A2A'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">
+      <span style="font-size:15px;">←</span> 返回导航中心
+    </a>
+    <div class="logo">IBPSX<span>®</span> · 销售赋能</div>
+  </div>
+  <div class="meta" id="header-meta">加载中…</div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1 id="hero-title">加载中…</h1>
+    <p class="subtitle" id="hero-subtitle"></p>
+    <nav class="stage-nav" id="stage-nav"></nav>
+  </div>
+</section>
+
+<main class="main">
+  <div class="toolbar">
+    <button class="toolbar-btn" onclick="expandAll()">全部展开</button>
+    <button class="toolbar-btn" onclick="collapseAll()">全部收起</button>
+  </div>
+  <div id="stages-container">
+    <div class="loading">正在加载内容…</div>
+  </div>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<script>
+// ── TYPE LABELS ──
+const typeLabel = { script: '话术', tool: '工具', action: '说明' };
+const typeBadge = { script: 'badge-script', tool: 'badge-tool', action: 'badge-action' };
+
+// ── RENDER ──
+function render(data) {
+  // Header meta
+  document.getElementById('header-meta').textContent = data.version || '';
+
+  // Hero
+  document.getElementById('hero-title').innerHTML =
+    data.title.replace('HR', '<em>HR</em>') + ' · <em>六阶段赋能手册</em>';
+  document.getElementById('hero-subtitle').textContent = data.subtitle || '';
+
+  // Stage nav pills
+  const nav = document.getElementById('stage-nav');
+  data.stages.forEach(s => {
+    const a = document.createElement('a');
+    a.className = 'stage-pill';
+    a.href = '#stage-' + s.id;
+    a.innerHTML = `<span class="num">0${s.id}</span>${s.name}`;
+    nav.appendChild(a);
+  });
+
+  // Stage cards
+  const container = document.getElementById('stages-container');
+  container.innerHTML = '';
+
+  data.stages.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'stage-card';
+    card.id = 'stage-' + s.id;
+
+    // Actions HTML
+    const actionsHtml = s.actions.map(a => `
+      <div class="action-item" data-type="${a.type}">
+        <div class="action-header" onclick="toggleAction(this)">
+          <div class="action-label-row">
+            <span class="action-type-badge ${typeBadge[a.type]}">${typeLabel[a.type]}</span>
+            <span class="action-label">${a.label}</span>
+          </div>
+          <span class="action-toggle">▼</span>
+        </div>
+        <div class="action-body">
+          <div class="action-content">${escHtml(a.content)}</div>
+        </div>
+      </div>
+    `).join('');
+
+    // Pain list
+    const painList = s.pain.details.map(d =>
+      `<li>${escHtml(d)}</li>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="stage-header" onclick="toggleStage(this)">
+        <div class="stage-num">${s.id}</div>
+        <div class="stage-title-block">
+          <div class="stage-name">${escHtml(s.name)}</div>
+          <div class="stage-tagline">${escHtml(s.tagline)}</div>
+        </div>
+        <div class="stage-meta">
+          <span class="owner-tag">${escHtml(s.owner)}</span>
+          <div class="toggle-btn">▼</div>
+        </div>
+      </div>
+      <div class="stage-body">
+        <div class="content-grid">
+          <div class="pain-col">
+            <div class="col-label">卡点 / 难点</div>
+            <div class="pain-summary">${escHtml(s.pain.summary)}</div>
+            <ul class="pain-list">${painList}</ul>
+          </div>
+          <div class="actions-col">
+            <div class="col-label">举措 / 工具</div>
+            ${actionsHtml}
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  // Footer
+  document.getElementById('site-footer').textContent =
+    'IBPSX® 研究院 · ibpsx.world · ' + (data.version || '');
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── TOGGLE ──
+function toggleStage(header) {
+  const card = header.closest('.stage-card');
+  card.classList.toggle('open');
+}
+
+function toggleAction(header) {
+  const item = header.closest('.action-item');
+  item.classList.toggle('open');
+  event.stopPropagation();
+}
+
+function expandAll() {
+  document.querySelectorAll('.stage-card').forEach(c => c.classList.add('open'));
+}
+function collapseAll() {
+  document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('open'));
+  document.querySelectorAll('.action-item').forEach(c => c.classList.remove('open'));
+}
+
+// ── LOAD DATA ──
+fetch('cs-data.json')
+  .then(r => {
+    if (!r.ok) throw new Error('无法加载 cs-data.json');
+    return r.json();
+  })
+  .then(data => render(data))
+  .catch(err => {
+    document.getElementById('stages-container').innerHTML =
+      `<div class="loading">⚠ 加载失败：${err.message}<br><small>请确保 data.json 与 index.html 在同一目录，且通过服务器访问。</small></div>`;
+  });
+</script>
+</body>
+</html>
